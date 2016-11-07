@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Framework\Console\CommandListInterface">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="resetProducts" xsi:type="object">Comunicart\Reset\Console\Command\Products</item>
+                <item name="resetReviews" xsi:type="object">Comunicart\Reset\Console\Command\Reviews</item>
+                <item name="resetCategories" xsi:type="object">Comunicart\Reset\Console\Command\Categories</item>
+                <item name="resetCustomers" xsi:type="object">Comunicart\Reset\Console\Command\Customers</item>
+                <item name="resetOrders" xsi:type="object">Comunicart\Reset\Console\Command\Orders</item>
+            </argument>
+        </arguments>
+    </type>
+</config>

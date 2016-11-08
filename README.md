@@ -4,7 +4,13 @@ Reset database removing categories, products, orders, customers and reviews
 
 # Install
 
+Download:
+
 `composer require comunicart/magento2-reset`
+
+Enable module:
+
+`php bin/magento module:enable Comunicart_Reset`
 
 # Usage
 

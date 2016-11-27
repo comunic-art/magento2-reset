@@ -2,7 +2,7 @@
   "name": "comunicart/magento2-reset",
   "description": "Reset database removing categories, products, orders, customers and reviews.",
   "type": "magento2-module",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "license": [
     "OSL-3.0",
     "AFL-3.0"

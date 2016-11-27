@@ -12,11 +12,12 @@ class Orders extends AbstractReset {
 
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resource,
-	\Magento\Indexer\Model\IndexerFactory $indexerFactory,
-        StoreManagerInterface $storeManager
+	    \Magento\Indexer\Model\IndexerFactory $indexerFactory,
+        StoreManagerInterface $storeManager,
+        \Magento\Framework\Event\ManagerInterface $eventManager
     )
     {
-        parent::__construct($resource, $indexerFactory);
+        parent::__construct($resource, $indexerFactory, $eventManager);
         $this->_storeManager = $storeManager;
     }
 
@@ -66,6 +67,8 @@ class Orders extends AbstractReset {
             'sales_shipment_track',
             'sales_shipping_aggregated',
             'sales_shipping_aggregated_order',
+            'salesrule_coupon_aggregated',
+            'salesrule_coupon_aggregated_updated',
             'quote',
             'quote_address',
             'quote_address_item',
@@ -74,6 +77,8 @@ class Orders extends AbstractReset {
             'quote_item_option',
             'quote_payment',
             'quote_shipping_rate',
+            'tax_order_aggregated_created',
+            'tax_order_aggregated_updated'
         ];
 
         foreach ($this->_storeManager->getStores(true) as $store) {

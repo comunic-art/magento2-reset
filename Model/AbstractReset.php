@@ -33,16 +33,32 @@ abstract class AbstractReset
     protected $_indexerFactory;
 
     /**
+     * @var \Magento\Framework\Event\ManagerInterface
+     */
+    protected $_eventManager;
+
+    /** @var null|array */
+    protected $_tables;
+
+    /** @var null|array */
+    protected $_executeBefore;
+
+    /** @var null|array */
+    protected $_executeAfter;
+
+    /**
      * AbstractReset constructor.
      * @param \Magento\Framework\App\ResourceConnection $resource
      */
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resource,
-        \Magento\Indexer\Model\IndexerFactory $indexerFactory
+        \Magento\Indexer\Model\IndexerFactory $indexerFactory,
+        \Magento\Framework\Event\ManagerInterface $eventManager
     )
     {
         $this->_resource = $resource;
         $this->_indexerFactory = $indexerFactory;
+        $this->_eventManager = $eventManager;
     }
 
 
@@ -61,7 +77,7 @@ abstract class AbstractReset
      * @param $table
      * @return string
      */
-    protected function getTableName($table) {
+    public function getTableName($table) {
         return $this->_resource->getTableName($table);
     }
 
@@ -88,9 +104,17 @@ abstract class AbstractReset
      */
     public function reset()
     {
-        $tables = $this->getTables();
-        $before = $this->executeBefore();
-        $after = $this->executeAfter();
+        $this->_eventManager->dispatch('reset_data', [
+            'object' => $this,
+            'tables' => $this->_getTables(),
+            'execute_before' => $this->_executeBefore(),
+            'execute_after' => $this->_executeAfter()
+        ]);
+
+        $tables = $this->_getTables();
+        $before = $this->_executeBefore();
+        $after = $this->_executeAfter();
+
         if ($this->_output) {
             $total = count($tables);
             if (! empty($before)) {
@@ -151,9 +175,38 @@ abstract class AbstractReset
     }
 
     /**
+     * @param array $tables
+     */
+    public function setTables($tables) {
+        $this->_tables = $tables;
+    }
+
+    /**
+     * @param array $executeBefore
+     */
+    public function setExecuteBefore($executeBefore) {
+        $this->_executeBefore = $executeBefore;
+    }
+
+    /**
+     * @param array $executeAfter
+     */
+    public function setExecuteAfter($executeAfter) {
+        $this->_executeAfter = $executeAfter;
+    }
+
+    /**
      * Return tables to truncate.
      */
     abstract protected function getTables();
+
+    protected function _getTables() {
+        if ($this->_tables === null) {
+            $this->_tables = $this->getTables();
+        }
+
+        return $this->_tables;
+    }
 
     /**
      * Return SQL code to execute before reset
@@ -161,9 +214,25 @@ abstract class AbstractReset
      */
     abstract protected function executeBefore();
 
+    protected function _executeBefore() {
+        if ($this->_executeBefore === null) {
+            $this->_executeBefore = $this->executeBefore();
+        }
+
+        return $this->_executeBefore;
+    }
+
     /**
      * Return SQL code to execute after reset
      * @return array
      */
     abstract protected function executeAfter();
+
+    protected function _executeAfter() {
+        if ($this->_executeAfter === null) {
+            $this->_executeAfter = $this->executeAfter();
+        }
+
+        return $this->_executeAfter;
+    }
 }
